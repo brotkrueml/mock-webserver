@@ -6,8 +6,7 @@ interface MultiResponseInterface extends ResponseInterface {
 
 	/**
 	 * @internal
-	 * @return bool
 	 */
-	public function next();
+	public function next() : bool;
 
 }

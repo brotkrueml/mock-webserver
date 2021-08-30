@@ -2,39 +2,31 @@
 
 namespace donatj\MockWebServer;
 
-use donatj\MockWebServer\Exceptions;
-
 class MockWebServer {
 
-	const VND = 'VND.DonatStudios.MockWebServer';
+	public const VND = 'VND.DonatStudios.MockWebServer';
 
-	const LAST_REQUEST_FILE  = 'last.request';
-	const REQUEST_COUNT_FILE = 'count.request';
+	public const LAST_REQUEST_FILE  = 'last.request';
+	public const REQUEST_COUNT_FILE = 'count.request';
 
-	const TMP_ENV = 'MOCK_WEB_SERVER_TMP';
+	public const TMP_ENV = 'MOCK_WEB_SERVER_TMP';
 
 	private $pid;
 
-	/**
-	 * @var string
-	 */
+	/** @var string */
 	private $host;
 
-	/**
-	 * @var int
-	 */
+	/** @var int */
 	private $port;
 
 	/**
-	 * Indicates whether or not the server was successfully started
+	 * Indicates whether the server was successfully started
 	 *
 	 * @var bool
 	 */
 	private $started = false;
 
-	/**
-	 * @var string
-	 */
+	/** @var string */
 	private $tmpDir;
 
 	/**
@@ -43,10 +35,10 @@ class MockWebServer {
 	 * @param int    $port Network port to run on
 	 * @param string $host Listening hostname
 	 */
-	public function __construct( $port = 0, $host = '127.0.0.1' ) {
+	public function __construct( int $port = 0, string $host = '127.0.0.1' ) {
 		$this->host = $host;
 		$this->port = $port;
-		if( $this->port == 0 ) {
+		if( $this->port === 0 ) {
 			$this->port = $this->findOpenPort();
 		}
 
@@ -56,7 +48,7 @@ class MockWebServer {
 	/**
 	 * Start the Web Server on the selected port and host
 	 */
-	public function start() {
+	public function start() : void {
 		if( $this->isRunning() ) {
 			return;
 		}
@@ -69,6 +61,7 @@ class MockWebServer {
 		if( !putenv(self::TMP_ENV . '=' . $this->tmpDir) ) {
 			throw new Exceptions\RuntimeException('Unable to put environmental variable');
 		}
+
 		$fullCmd = sprintf('%s > %s 2>&1 & echo $!',
 			escapeshellcmd($cmd),
 			escapeshellarg($stdout)
@@ -111,10 +104,8 @@ class MockWebServer {
 
 	/**
 	 * Is the Web Server currently running?
-	 *
-	 * @return bool
 	 */
-	public function isRunning() {
+	public function isRunning() : bool {
 		if( !$this->pid ) {
 			return false;
 		}
@@ -128,7 +119,7 @@ class MockWebServer {
 	/**
 	 * Stop the Web Server
 	 */
-	public function stop() {
+	public function stop() : void {
 		if( $this->started ) {
 			exec(sprintf('kill %d',
 				$this->pid));
@@ -140,10 +131,8 @@ class MockWebServer {
 	/**
 	 * Get the HTTP root of the webserver
 	 *  e.g.: http://127.0.0.1:8123
-	 *
-	 * @return string
 	 */
-	public function getServerRoot() {
+	public function getServerRoot() : string {
 		return "http://{$this->host}:{$this->port}";
 	}
 
@@ -153,7 +142,7 @@ class MockWebServer {
 	 * @param \donatj\MockWebServer\ResponseInterface $response
 	 * @return string URL where response can be found
 	 */
-	public function getUrlOfResponse( ResponseInterface $response ) {
+	public function getUrlOfResponse( ResponseInterface $response ) : string {
 		$ref = InternalServer::storeResponse($this->tmpDir, $response);
 
 		return $this->getServerRoot() . '/' . self::VND . '/' . $ref;
@@ -161,12 +150,8 @@ class MockWebServer {
 
 	/**
 	 * Set a specified path to provide a specific response
-	 *
-	 * @param string                                  $path
-	 * @param \donatj\MockWebServer\ResponseInterface $response
-	 * @return string
 	 */
-	public function setResponseOfPath( $path, ResponseInterface $response ) {
+	public function setResponseOfPath( string $path, ResponseInterface $response ) : string {
 		$ref = InternalServer::storeResponse($this->tmpDir, $response);
 
 		$aliasPath = InternalServer::aliasPath($this->tmpDir, $path);
@@ -180,19 +165,15 @@ class MockWebServer {
 
 	/**
 	 * Override the default server response, e.g. Fallback or 404
-	 *
-	 * @param \donatj\MockWebServer\ResponseInterface $response
-	 * @return void
 	 */
-	public function setDefaultResponse( ResponseInterface $response ) {
+	public function setDefaultResponse( ResponseInterface $response ) : void {
 		InternalServer::storeDefaultResponse($this->tmpDir, $response);
 	}
 
 	/**
-	 * @return string
 	 * @internal
 	 */
-	private function getTmpDir() {
+	private function getTmpDir() : string {
 		$tmpDir = sys_get_temp_dir() ?: '/tmp';
 		if( !is_dir($tmpDir) || !is_writable($tmpDir) ) {
 			throw new \RuntimeException('Unable to find system tmp directory');
@@ -218,10 +199,8 @@ class MockWebServer {
 
 	/**
 	 * Get the previous requests associated request data.
-	 *
-	 * @return RequestInfo|null
 	 */
-	public function getLastRequest() {
+	public function getLastRequest() : ?RequestInfo {
 		$path = $this->tmpDir . DIRECTORY_SEPARATOR . self::LAST_REQUEST_FILE;
 		if( file_exists($path) ) {
 			$content = file_get_contents($path);
@@ -239,11 +218,8 @@ class MockWebServer {
 	 *
 	 * If offset is non-negative, the request will be the index from the start of the server.
 	 * If offset is negative, the request will be that from the end of the requests.
-	 *
-	 * @param int $offset
-	 * @return RequestInfo|null
 	 */
-	public function getRequestByOffset( $offset ) {
+	public function getRequestByOffset( int $offset ) : ?RequestInfo {
 		$reqs = glob($this->tmpDir . DIRECTORY_SEPARATOR . 'request.*');
 		natsort($reqs);
 
@@ -264,28 +240,22 @@ class MockWebServer {
 
 	/**
 	 * Get the host of the server.
-	 *
-	 * @return string
 	 */
-	public function getHost() {
+	public function getHost() : string {
 		return $this->host;
 	}
 
 	/**
 	 * Get the port the network server is to be ran on.
-	 *
-	 * @return int
 	 */
-	public function getPort() {
+	public function getPort() : int {
 		return $this->port;
 	}
 
 	/**
 	 * Let the OS find an open port for you.
-	 *
-	 * @return int
 	 */
-	private function findOpenPort() {
+	private function findOpenPort() : int {
 		$sock = socket_create(AF_INET, SOCK_STREAM, 0);
 
 		// Bind the socket to an address/port
@@ -302,4 +272,5 @@ class MockWebServer {
 
 		throw new Exceptions\RuntimeException('Failed to find open port');
 	}
+
 }
