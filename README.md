@@ -26,7 +26,7 @@ There has been work [started to implement this](https://github.com/donatj/mock-w
 
 ## Requirements
 
-- **php**: >=5.4
+- **php**: >=7.1
 - **ext-sockets**: *
 - **ext-json**: *
 - **ralouphie/getallheaders**: ~2.0 || ~3.0
