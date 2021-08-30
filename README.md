@@ -59,6 +59,7 @@ $url = $server->getServerRoot() . '/endpoint?get=foobar';
 
 echo "Requesting: $url\n\n";
 echo file_get_contents($url);
+
 ```
 
 Outputs:
@@ -119,6 +120,7 @@ $content = file_get_contents($url);
 // in the current scope by file_get_contents with the response headers
 echo implode("\n", $http_response_header) . "\n\n";
 echo $content . "\n";
+
 ```
 
 Outputs:
@@ -160,7 +162,7 @@ $server->start();
 $server->setDefaultResponse(new NotFoundResponse);
 
 $content = file_get_contents($server->getServerRoot() . '/PageDoesNotExist', false, stream_context_create([
-	'http' => [ 'ignore_errors' => true ] // allow reading 404s
+	'http' => [ 'ignore_errors' => true ], // allow reading 404s
 ]));
 
 // $http_response_header is a little known variable magically defined
@@ -192,7 +194,7 @@ VND.DonatStudios.MockWebServer: Resource '/PageDoesNotExist' not found!
 use donatj\MockWebServer\MockWebServer;
 use donatj\MockWebServer\Response;
 
-class ExampleTest extends PHPUnit_Framework_TestCase {
+class ExampleTest extends PHPUnit\Framework\TestCase {
 
 	/** @var MockWebServer */
 	protected static $server;
@@ -215,12 +217,13 @@ class ExampleTest extends PHPUnit_Framework_TestCase {
 		$this->assertSame('foo bar content', $result);
 	}
 
-	static function tearDownAfterClass() {
+	public static function tearDownAfterClass() {
 		// stopping the web server during tear down allows us to reuse the port for later tests
 		self::$server->stop();
 	}
 
 }
+
 ```
 
 ## Multiple Responses from the Same Endpoint
@@ -262,6 +265,7 @@ $contentThree = file_get_contents($url, false, stream_context_create([ 'http' =>
 echo $contentOne . "\n";
 echo $contentTwo . "\n";
 echo $contentThree . "\n";
+
 ```
 
 Outputs:
@@ -290,7 +294,6 @@ require __DIR__ . '/../vendor/autoload.php';
 $server = new MockWebServer;
 $server->start();
 
-
 // Create a response for both a POST and GET request to the same URL
 
 $response = new ResponseByMethod([
@@ -308,6 +311,7 @@ foreach( [ ResponseByMethod::METHOD_GET, ResponseByMethod::METHOD_POST ] as $met
 
 	echo $content . "\n\n";
 }
+
 ```
 
 Outputs:
