@@ -126,11 +126,11 @@ echo $content . "\n";
 Outputs:
 
 ```
-Requesting: http://127.0.0.1:61880/definedPath
+Requesting: http://127.0.0.1:61874/definedPath
 
 HTTP/1.0 200 OK
-Host: 127.0.0.1:61880
-Date: Fri, 15 Jan 2021 15:43:40 GMT
+Host: 127.0.0.1:61874
+Date: Tue, 31 Aug 2021 19:50:15 GMT
 Connection: close
 X-Powered-By: PHP/7.3.25
 Cache-Control: no-cache
@@ -176,10 +176,10 @@ Outputs:
 
 ```
 HTTP/1.0 404 Not Found
-Host: 127.0.0.1:61355
-Date: Mon, 30 Aug 2021 20:02:58 GMT
+Host: 127.0.0.1:61874
+Date: Tue, 31 Aug 2021 19:50:15 GMT
 Connection: close
-X-Powered-By: PHP/7.3.29
+X-Powered-By: PHP/7.3.25
 Content-type: text/html; charset=UTF-8
 
 VND.DonatStudios.MockWebServer: Resource '/PageDoesNotExist' not found!
@@ -211,7 +211,7 @@ class ExampleTest extends PHPUnit\Framework\TestCase {
 	}
 
 	public function testGetSetPath() {
-		// $url = http://127.0.0.1:8123/definedEndPoint
+		// $url = http://127.0.0.1:61874/definedEndPoint
 		$url    = self::$server->setResponseOfPath('/definedEndPoint', new Response('foo bar content'));
 		$result = file_get_contents($url);
 		$this->assertSame('foo bar content', $result);
@@ -271,7 +271,7 @@ echo $contentThree . "\n";
 Outputs:
 
 ```
-Requesting: http://127.0.0.1:61886/definedPath
+Requesting: http://127.0.0.1:61874/definedPath
 
 Response One
 Response Two
@@ -317,10 +317,10 @@ foreach( [ ResponseByMethod::METHOD_GET, ResponseByMethod::METHOD_POST ] as $met
 Outputs:
 
 ```
-GET request to http://127.0.0.1:61894/foo/bar:
+GET request to http://127.0.0.1:61874/foo/bar:
 This is our http GET response
 
-POST request to http://127.0.0.1:61894/foo/bar:
+POST request to http://127.0.0.1:61874/foo/bar:
 This is our http POST response
 
 ```
